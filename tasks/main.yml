@@ -1,0 +1,141 @@
+# Standards: 0.1
+---
+- name: Fact keepingyouawake user
+  set_fact:
+    keepingyouawake_user: "{{ keepingyouawake_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - keepingyouawake
+
+- become: "{{ (keepingyouawake_user != ansible_user_id) | bool }}"
+  become_user: "{{ keepingyouawake_user }}"
+  block:
+    - name: Install required package
+      homebrew_cask:
+        name: keepingyouawake
+        greedy: True
+        options: appdir=/Applications
+        accept_external_apps: False
+        state: upgraded
+      tags:
+        - keepingyouawake
+
+    - name: Remove quarantine flag
+      register: keepingyouawake_quarantine
+      failed_when: keepingyouawake_quarantine.rc != 0 and "No such xattr" not in keepingyouawake_quarantine.stderr
+      changed_when: keepingyouawake_quarantine.rc == 0
+      command: xattr -d com.apple.quarantine /Applications/KeepingYouAwake.app
+      tags:
+        - keepingyouawake
+
+    - name: Has launched before
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: SUHasLaunchedBefore
+        type: bool
+        value: True
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Menubar highlight disabled
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.MenuBarIconHighlightDisabled
+        type: bool
+        value: "{{ keepingyouawake_menubar_highlight_disabled }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Notifications enabled
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.NotificationsEnabled
+        type: bool
+        value: "{{ keepingyouawake_notifications_enabled }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Activate on launch
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.ActivateOnLaunch
+        type: bool
+        value: "{{ keepingyouawake_activate_on_launch }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Launch at login
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.LaunchAtLogin
+        type: bool
+        value: "{{ keepingyouawake_launch_at_login }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Time interval
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.TimeInterval
+        type: int
+        value: "{{ keepingyouawake_time_interval }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Battery threshold enabled
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.BatteryCapacityThresholdEnabled
+        type: bool
+        value: "{{ keepingyouawake_battery_threshold_enabled }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Battery threshold value
+      notify:
+        - Kill keepingyouawake
+        - Start keepingyouawake
+      osx_defaults:
+        domain: info.marcel-dierkes.KeepingYouAwake
+        key: info.marcel-dierkes.KeepingYouAwake.BatteryCapacityThreshold
+        type: float
+        value: "{{ keepingyouawake_batter_threshold_value }}"
+        state: present
+      tags:
+        - keepingyouawake
+
+    - name: Start background application
+      when: keepingyouawake_started
+      changed_when: False
+      command: open -j /Applications/KeepingYouAwake.app
+      tags:
+        - keepingyouawake
+
+...

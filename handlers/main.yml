@@ -1,0 +1,16 @@
+# Standards: 0.1
+---
+- name: Kill keepingyouawake
+  command: killall KeepingYouAwake
+  register: keepingyouawake_kill
+  failed_when: keepingyouawake_kill.rc != 0 and "No matching processes belonging to you were found" not in keepingyouawake_kill.stderr
+  become: "{{ (keepingyouawake_user != ansible_user_id) | bool }}"
+  become_user: "{{ keepingyouawake_user }}"
+
+- name: Start keepingyouawake
+  when: keepingyouawake_started
+  command: open -g /Applications/KeepingYouAwake.app
+  become: "{{ (keepingyouawake_user != ansible_user_id) | bool }}"
+  become_user: "{{ keepingyouawake_user }}"
+
+...
