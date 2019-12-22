@@ -10,6 +10,7 @@
   become_user: "{{ keepingyouawake_user }}"
   block:
     - name: Install required package
+      ignore_errors: True
       homebrew_cask:
         name: keepingyouawake
         greedy: True

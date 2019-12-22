@@ -9,7 +9,7 @@
 
 - name: Start keepingyouawake
   when: keepingyouawake_started
-  command: open -g /Applications/KeepingYouAwake.app
+  command: open -j /Applications/KeepingYouAwake.app
   become: "{{ (keepingyouawake_user != ansible_user_id) | bool }}"
   become_user: "{{ keepingyouawake_user }}"
 
