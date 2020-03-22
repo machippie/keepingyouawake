@@ -4,27 +4,6 @@
 # @var keepingyouawake_user:value: keepingyouawake_user | default(homebrew_user) | default(ansible_user_id)
 # keepingyouawake_user:
 
-# @var keepingyouawake_menubar_highlight_disabled:description: Menubar highlight disabled
-keepingyouawake_menubar_highlight_disabled: False
-
-# @var keepingyouawake_notifications_enabled:description: Notifications enabled
-keepingyouawake_notifications_enabled: True
-
-# @var keepingyouawake_activate_on_launch:description: Activate on launch
-keepingyouawake_activate_on_launch: False
-
-# @var keepingyouawake_launch_at_login:description: Launch at login
-keepingyouawake_launch_at_login: True
-
-# @var keepingyouawake_time_interval:description: Time interval
-keepingyouawake_time_interval: 0
-
-# @var keepingyouawake_battery_threshold_enabled:description: Battery threshold enabled
-keepingyouawake_battery_threshold_enabled: True
-
-# @var keepingyouawake_batter_threshold_value:description: Battery threshold value
-keepingyouawake_batter_threshold_value: 10
-
 # @var keepingyouawake_started:description: Start in background after install
 keepingyouawake_started: True
 
